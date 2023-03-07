@@ -1,0 +1,83 @@
+
+
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// ---- END VEXCODE CONFIGURED DEVICES ----
+
+
+#include "vex.h"
+
+
+using namespace vex;
+
+
+// A global instance of competition
+competition Competition;
+
+
+// define your global instances of motors and other devices here
+
+
+void pre_auton(void) {
+ // Initializing Robot Configuration. DO NOT REMOVE!
+ vexcodeInit();
+
+
+
+ // All activities that occur before the competition starts
+ // Example: clearing encoders, setting servo positions, ...
+}
+
+
+
+
+void autonomous(void) {
+ Drivetrain.driveFor(reverse, 200, mm);
+ conveyor.spin(forward, 20, velocityUnits::pct);
+ wait(1, seconds);
+}
+
+
+void userControl(void) {
+  Brain.Screen.clearScreen();
+  float rate = 1.0;
+  while (true) {
+    if(Controller1.ButtonA.pressing()) rate = 0.5;
+    if(Controller1.ButtonB.pressing()) rate = 0.75;
+    if(Controller1.ButtonX.pressing()) rate = 1.0;
+
+    LeftMotors.setVelocity(Controller1.Axis3.position() * rate, pct);
+    RightMotors.setVelocity(Controller1.Axis2.position() * rate, pct);
+    wait(20, msec);
+  }
+}
+
+   // ........................................................................
+   // Insert user code here. This is where you use the joystick values to
+   // update your motors, etc.
+   // ........................................................................
+
+
+   wait(20, msec); // Sleep the task for a short amount of time to
+                   // prevent wasted resources.
+ }
+}
+
+
+//
+// Main will set up the competition functions and callbacks.
+//
+int main() {
+ // Set up callbacks for autonomous and driver control periods.
+ Competition.autonomous(autonomous);
+ Competition.drivercontrol(usercontrol);
+
+
+ // Run the pre-autonomous function.
+ pre_auton();
+ 
+
+ // Prevent main from exiting with an infinite loop.
+ while (true) {
+   wait(100, msec);
+ }
+}
