@@ -1,10 +1,18 @@
 
 
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// ---- END VEXCODE CONFIGURED DEVICES ----
-
-
 #include "vex.h"
+
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Drivetrain           drivetrain    7, 10           
+// conveyor             motor_group   6, 11           
+// ConveyorbeltMotor    motor         1               
+// Controller1          controller                    
+// ForwardReverseMotor  motor         2               
+// LeftDriveMotor       motor         3               
+// RightDriveMotor      motor         4               
+// ---- END VEXCODE CONFIGURED DEVICES ----
 
 
 using namespace vex;
@@ -15,7 +23,6 @@ competition Competition;
 
 
 // define your global instances of motors and other devices here
-
 
 void pre_auton(void) {
  // Initializing Robot Configuration. DO NOT REMOVE!
@@ -29,7 +36,6 @@ void pre_auton(void) {
 
 
 
-
 void autonomous(void) {
  Drivetrain.driveFor(reverse, 200, mm);
  conveyor.spin(forward, 20, velocityUnits::pct);
@@ -37,42 +43,46 @@ void autonomous(void) {
 }
 
 
-void userControl(void) {
-  Brain.Screen.clearScreen();
-  float rate = 1.0;
-  while (true) {
-    if(Controller1.ButtonA.pressing()) rate = 0.5;
-    if(Controller1.ButtonB.pressing()) rate = 0.75;
-    if(Controller1.ButtonX.pressing()) rate = 1.0;
 
-    LeftMotors.setVelocity(Controller1.Axis3.position() * rate, pct);
-    RightMotors.setVelocity(Controller1.Axis2.position() * rate, pct);
-    wait(20, msec);
+void usercontrol(void) { 
+  while (1){
+    
+  if(Controller1.ButtonUp.pressing()){
+  conveyor.spin(reverse,100, pct);
+  LeftDriveMotor.spin(forward, 100, pct);
+  RightDriveMotor.spin(forward, 100, pct);}
+     
+  else if(Controller1.ButtonLeft.pressing()){
+  RightDriveMotor.spin(forward, 100, pct);
+  LeftDriveMotor.spin(reverse, 100, pct);}
+
+  else if(Controller1.ButtonRight.pressing()){
+  RightDriveMotor.spin(reverse, 100,pct);
+  LeftDriveMotor.spin(forward, 100, pct);}
+
+  else if(Controller1.ButtonDown.pressing()){
+  conveyor.spin(forward, 100, pct);
+  LeftDriveMotor.spin(reverse, 100, pct);
+  RightDriveMotor.spin(reverse, 100, pct);}
+
+  else if(Controller1.ButtonA.pressing())
+  ConveyorbeltMotor.spin(forward, 100, pct);
+
+  else if(Controller1.ButtonB.pressing())
+  ConveyorbeltMotor.spin(reverse, 100, pct);
+
+
+    wait(5, msec);
+                    
   }
 }
 
-   // ........................................................................
-   // Insert user code here. This is where you use the joystick values to
-   // update your motors, etc.
-   // ........................................................................
 
-
-   wait(20, msec); // Sleep the task for a short amount of time to
-                   // prevent wasted resources.
- }
-}
-
-
-//
-// Main will set up the competition functions and callbacks.
-//
 int main() {
- // Set up callbacks for autonomous and driver control periods.
  Competition.autonomous(autonomous);
  Competition.drivercontrol(usercontrol);
 
 
- // Run the pre-autonomous function.
  pre_auton();
  
 
